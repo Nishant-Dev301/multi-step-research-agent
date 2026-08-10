@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Multi-Step Research Agent</title>
+<style>
+  :root { --accent: #C6FF3D; --bg: #0A0A0A; --card: #141414; --border: #2b2b2b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, Segoe UI, Arial, sans-serif; background: var(--bg); color: #fff; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  .sub { color: #999; margin-bottom: 28px; }
+  .row { display:flex; gap: 10px; margin-bottom: 24px; }
+  input[type=text] { flex:1; padding: 14px; border-radius: 8px; border:1px solid var(--border); background:#111; color:#fff; font-size:15px; }
+  button { padding: 14px 22px; border-radius: 8px; border:none; background: var(--accent); color:#0A0A0A; font-weight:700; cursor:pointer; font-size:15px; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  .section { background: var(--card); border:1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
+  .section h3 { margin:0 0 8px; color: var(--accent); text-transform: uppercase; font-size:13px; letter-spacing:1px; }
+  .meta { font-size:12px; color:#999; margin-top:10px; display:flex; gap:16px; flex-wrap:wrap; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
+  .settled { background: #1f3d0f; color: var(--accent); }
+  .rejected { background: #3d1010; color: #ff6b6b; }
+  .sources a { color: #8fcc1a; display:block; font-size:12px; margin-top:4px; }
+  #summaryBar { display:flex; gap:24px; font-size:13px; color:#ccc; margin-bottom:20px; }
+  #summaryBar b { color: var(--accent); }
+  .loading { color: #999; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔎 Multi-Step Research Agent</h1>
+  <div class="sub">Decomposes your query → runs search / enrich / fact-check / summarize → settles x402 payments per step → compiles a cited report.</div>
+
+  <div class="row">
+    <input id="query" type="text" placeholder="e.g. Impact of autonomous AI agent payments on API economies" />
+    <button id="go">Run Research</button>
+  </div>
+
+  <div id="summaryBar"></div>
+  <div id="output"></div>
+</div>
+
+<script>
+const btn = document.getElementById('go');
+const input = document.getElementById('query');
+const output = document.getElementById('output');
+const summaryBar = document.getElementById('summaryBar');
+
+async function run() {
+  const query = input.value.trim();
+  if (!query) return;
+  btn.disabled = true;
+  output.innerHTML = '<div class="loading">Running orchestration pipeline…</div>';
+  summaryBar.innerHTML = '';
+
+  try {
+    const res = await fetch('/research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    });
+    const data = await res.json();
+    render(data);
+  } catch (e) {
+    output.innerHTML = '<div class="loading">Error: ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function render(data) {
+  const p = data.payment_summary;
+  summaryBar.innerHTML = `
+    <div>Spent: <b>$${p.total_spent}</b> / $${p.budget}</div>
+    <div>Calls: <b>${p.calls}</b></div>
+    <div>Settled: <b>${p.settled}</b></div>
+    <div>Rejected: <b>${p.rejected}</b></div>
+    <div>Duration: <b>${data.duration_seconds}s</b></div>
+  `;
+
+  output.innerHTML = data.sections.map(s => `
+    <div class="section">
+      <h3>${s.task_type.replace('_',' ')}</h3>
+      <div>${s.content}</div>
+      <div class="meta">
+        <span class="badge ${s.payment_status}">${s.payment_status} · $${s.payment_amount.toFixed(4)}</span>
+        <span>confidence: ${(s.confidence*100).toFixed(0)}%</span>
+      </div>
+      ${s.sources.length ? '<div class="sources">' + s.sources.map(u => `<a href="${u}" target="_blank">${u}</a>`).join('') + '</div>' : ''}
+    </div>
+  `).join('');
+}
+
+btn.addEventListener('click', run);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
+</script>
+</body>
+</html>
