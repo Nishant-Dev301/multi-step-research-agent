@@ -22,28 +22,31 @@ If the budget runs out mid-research, later tasks are correctly **rejected** rath
 
 ## 📁 Project Structure
 
+```
 multi-step-research-agent/
 ├── app/
-│ ├── main.py # FastAPI app: routes, request/response models
-│ ├── orchestrator.py# Coordinates planner → payment → tools → report
-│ ├── agents/
-│ │ ├── planner.py # Breaks a query into an ordered task list
-│ │ └── tools.py # search / enrich / fact_check / summarize tools
-│ ├── x402/
-│ │ └── payment.py # SpendPolicy, PaymentProvider, MockPaymentProvider
-│ ├── future/ # Advanced enhancements — see ENHANCEMENTS.md
-│ │ ├── parallel_orchestrator.py# Async/concurrent task execution
-│ │ ├── real_payment_provider.py # Scaffold for a live x402 facilitator
-│ │ ├── export.py # Report export (Markdown / plain text) — LIVE
-│ │ ├── history.py # Session query history — LIVE
-│ │ ├── streaming.py # SSE streaming design (planned)
-│ │ └── rate_limiter.py # Per-key rate limiting (planned)
-│ └── static/
-│ └── index.html # Minimal frontend to run & visualize a query
-├── ENHANCEMENTS.md # Roadmap: advanced functions + user-friendly features
+│   ├── main.py                  # FastAPI app: routes, request/response models
+│   ├── orchestrator.py          # Coordinates planner → payment → tools → report
+│   ├── agents/
+│   │   ├── planner.py           # Breaks a query into an ordered task list
+│   │   └── tools.py             # search / enrich / fact_check / summarize tools
+│   ├── x402/
+│   │   └── payment.py           # SpendPolicy, PaymentProvider, MockPaymentProvider
+│   ├── future/                  # Advanced enhancements — see ENHANCEMENTS.md
+│   │   ├── parallel_orchestrator.py   # Async/concurrent task execution
+│   │   ├── real_payment_provider.py   # Scaffold for a live x402 facilitator
+│   │   ├── export.py            # Report export (Markdown / plain text) — LIVE
+│   │   ├── history.py           # Session query history — LIVE
+│   │   ├── streaming.py         # SSE streaming design (planned)
+│   │   └── rate_limiter.py      # Per-key rate limiting (planned)
+│   └── static/
+│       └── index.html           # Minimal frontend to run & visualize a query
+├── ENHANCEMENTS.md               # Roadmap: advanced functions + user-friendly features
 ├── requirements.txt
 ├── .gitignore
 └── README.md
+```
+
 ---
 
 ## ⚙️ Getting Started
@@ -115,4 +118,4 @@ Agentic systems that autonomously call paid APIs need a way to guarantee they ca
 
 ## 📄 License
 
-Built for Brainwave Hackathon 2026.
+Built for [Brainwave Hackathon 2026].
