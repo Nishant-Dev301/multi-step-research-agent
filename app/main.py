@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app.orchestrator import ResearchOrchestrator
+from app.orchestrator import ResearchOrchestrator,ResearchReport 
 from app.x402.payment import SpendPolicy
 from app.future import history
 from app.future.export import EXPORTERS
@@ -33,7 +33,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Keeps the most recent report per query in memory so /research/export can
 # serve it without re-running (and re-paying for) the whole pipeline.
-_last_reports: dict[str, "object"] = {}
+_last_reports: dict[str, ResearchReport] = {}
 
 
 class ResearchRequest(BaseModel):
