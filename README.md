@@ -8,7 +8,7 @@ Built with a policy-guarded **agent payment layer** (x402-style): every tool cal
 
 ---
 
-## 🚀 What it does
+## What it does
 
 1. A user submits a research query
 2. The **planner** decomposes it into an ordered set of tasks (search → enrich → fact-check → summarize)
