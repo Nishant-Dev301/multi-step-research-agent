@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.orchestrator import ResearchOrchestrator,ResearchReport 
 from app.x402.payment import SpendPolicy
@@ -38,9 +38,8 @@ _last_reports: dict[str, ResearchReport] = {}
 
 class ResearchRequest(BaseModel):
     query: str
-    max_per_call: float = 0.05
-    max_per_session: float = 1.00
-
+    max_per_call: float = Field(default=0.05, ge=0, description="Must be zero or greater")
+    max_per_session: float = Field(default=1.00, ge=0, description="Must be zero or greater")
 
 @app.get("/")
 def serve_ui():
